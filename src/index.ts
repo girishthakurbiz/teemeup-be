@@ -5,6 +5,8 @@ import express from "express";
 import bodyParser from "body-parser";
 
 import { errorHandler } from "./middlewares/resHandler";
+import utilRouter from "./services/UtilService/router";
+import userImageRouter from "./services/UserImage/router";
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -18,6 +20,8 @@ app.get("/", (req, res) => {
 });
 
 app.use(errorHandler);
+app.use("/userimage", userImageRouter);
+app.use("/util", utilRouter);
 
 app.listen(port, () => {
   console.log(`server is listening on http://localhost:${port}....`);

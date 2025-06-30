@@ -1,9 +1,9 @@
 import Joi from "joi";
 
 
-const utilschema = Joi.object({
+const imageschema = Joi.object({
   type: Joi.string(),
   isRequired: Joi.boolean(),
 });
 
-export { utilschema};
+export { imageschema};
