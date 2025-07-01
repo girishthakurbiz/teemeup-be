@@ -6,7 +6,8 @@ import bodyParser from "body-parser";
 
 import { errorHandler } from "./middlewares/resHandler";
 import utilRouter from "./services/UtilService/router";
-import userImageRouter from "./services/UserImage/router";
+import userImageRouter from "./services/GetDesign/router";
+import { createImage } from "./services/CreateDesign/controller/createDesign";
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -20,7 +21,8 @@ app.get("/", (req, res) => {
 });
 
 app.use(errorHandler);
-app.use("/userimage", userImageRouter);
+app.use("/createdesign",createImage);
+app.use("/getdesign", userImageRouter);
 app.use("/util", utilRouter);
 
 app.listen(port, () => {
