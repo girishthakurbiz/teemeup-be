@@ -21,7 +21,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/createdesign", createDesignRouter);
-app.use("/getdesign", userImageRouter);
+// app.use("/getdesign", userImageRouter);
 app.use("/util", utilRouter);
 app.use(errorHandler);
 

@@ -1,7 +1,8 @@
 import { Router } from "express";
-import { createImage } from "../controller/createDesign"; 
+import { createImage } from "../controller/createDesign";
 
-const createDesignRouter = Router();
+const createDesignRouter = Router(); 
+
 createDesignRouter.post("/createImage", createImage); 
 
-export default createDesignRouter; 
+export default createDesignRouter;
