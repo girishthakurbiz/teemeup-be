@@ -7,3 +7,4 @@ export const categoryToolMap: Record<string, string[]> = {
     "Easy UI for commercial images": ["leonardo"],
     "Developer experimentation": ["leonardo"],
   };
+

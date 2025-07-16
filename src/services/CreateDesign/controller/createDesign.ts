@@ -12,6 +12,7 @@ interface EnhancedPrompt {
   audience_inference: string; // category
   design_type: "Visual" | "Text-Based" | "Hybrid";
   final_prompt: string;
+  category_name: string; // Mapped category from predefined list
 }
 
 export const createImage = async (
@@ -27,13 +28,13 @@ export const createImage = async (
       "Missing or invalid 'description' in request body."
     );
   }
-
   try {
     const rawOutput = await generateEnhancedPrompt(description);
 
     let enhancedPrompt: EnhancedPrompt;
     try {
       enhancedPrompt = JSON.parse(rawOutput);
+      console.log("enhancedPrompt", enhancedPrompt);
     } catch (parseErr) {
       console.error("Failed to parse OpenAI response:", parseErr);
       return sendServerError(
@@ -42,13 +43,11 @@ export const createImage = async (
         "Invalid response format from OpenAI."
       );
     }
-
-    const category = enhancedPrompt.audience_inference;
-    const finalPrompt = enhancedPrompt.final_prompt;
-
+    const { final_prompt, category_name } = enhancedPrompt;
     let toolResult;
+
     try {
-      toolResult = await dispatchToolByCategory(category, finalPrompt);
+      toolResult = await dispatchToolByCategory(category_name, final_prompt);
     } catch (toolErr) {
       return sendServerError(
         res,
@@ -60,9 +59,9 @@ export const createImage = async (
     return successHandler(res, {
       data: {
         design_id: "design_id", // Replace with real ID if available
-        final_prompt: finalPrompt,
-        generated_by: toolResult.provider,
-        image_url: toolResult.imageUrl,
+        final_prompt,
+        generated_by: toolResult?.provider,
+        image_url: toolResult?.imageUrl,
       },
     });
   } catch (error) {

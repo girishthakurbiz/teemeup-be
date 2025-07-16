@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const handleLeonardo = async (prompt: string) => {
   try {
-    console.log("handleLeonardo")
+    console.log("handleLeonardo");
     const response = await axios.post(
       "https://cloud.leonardo.ai/api/rest/v1/generations",
       {
