@@ -8,6 +8,7 @@ import { errorHandler } from "./middlewares/resHandler";
 import utilRouter from "./services/UtilService/router";
 // import userImageRouter from "./services/GetDesign/router";
 import createDesignRouter from "./services/CreateDesign/router";
+import { fetchAndStoreModels } from "./utils/fetchAndStoreModels";
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -25,6 +26,16 @@ app.use("/createdesign", createDesignRouter);
 app.use("/util", utilRouter);
 app.use(errorHandler);
 
-app.listen(port, () => {
-  console.log(`server is listening on http://localhost:${port}....`);
-});
+(async () => {
+  try {
+    // await fetchAndStoreModels(); // fetch from Leonardo and store in toolMap file
+    console.log("Model data fetched and stored.");
+
+    app.listen(port, () => {
+      console.log(`Server is running on http://localhost:${port}`);
+    });
+  } catch (err) {
+    console.error("Error during server startup:", err);
+    process.exit(1);
+  }
+})();

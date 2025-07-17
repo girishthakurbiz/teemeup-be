@@ -55,6 +55,7 @@ export const createImage = async (
         "Failed to generate image using selected tool."
       );
     }
+    console.log("toolResult", toolResult);
 
     return successHandler(res, {
       data: {
