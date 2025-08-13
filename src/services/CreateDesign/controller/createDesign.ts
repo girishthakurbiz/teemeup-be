@@ -15,21 +15,18 @@ interface EnhancedPrompt {
   category_name: string; // Mapped category from predefined list
 }
 
-export const createImage = async (
+export const generateImagePrompt = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<Response> => {
-  const { description } = req.body;
+  const { idea, answers, topics } = req.body;
 
-  if (typeof description !== "string" || !description.trim()) {
-    return sendClientError(
-      res,
-      "Missing or invalid 'description' in request body."
-    );
+  if (typeof idea !== "string" || !idea.trim()) {
+    return sendClientError(res, "Missing or invalid 'idea' in request body.");
   }
   try {
-    const rawOutput = await generateEnhancedPrompt(description);
+    const rawOutput = await generateEnhancedPrompt(idea, answers);
 
     let enhancedPrompt: EnhancedPrompt;
     try {
@@ -43,26 +40,23 @@ export const createImage = async (
         "Invalid response format from OpenAI."
       );
     }
-    const { final_prompt, category_name } = enhancedPrompt;
     let toolResult;
 
-    try {
-      toolResult = await dispatchToolByCategory(category_name, final_prompt);
-    } catch (toolErr) {
-      return sendServerError(
-        res,
-        toolErr,
-        "Failed to generate image using selected tool."
-      );
-    }
+    // try {
+    //   toolResult = await dispatchToolByCategory(category_name, final_prompt);
+    // } catch (toolErr) {
+    //   return sendServerError(
+    //     res,
+    //     toolErr,
+    //     "Failed to generate image using selected tool."
+    //   );
+    // }
     console.log("toolResult", toolResult);
 
     return successHandler(res, {
       data: {
         design_id: "design_id", // Replace with real ID if available
-        final_prompt,
-        generated_by: toolResult?.provider,
-        image_url: toolResult?.imageUrl,
+        enhancedPrompt : enhancedPrompt,
       },
     });
   } catch (error) {

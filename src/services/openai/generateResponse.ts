@@ -1,16 +1,8 @@
 import prompts from "../../config/promptTemplates";
+import { replacePlaceholders } from "../CreateDesign/helpers/utils";
 
 import { callOpenAI } from "../openai/index";
-function replacePlaceholders(
-  template: string,
-  values: Record<string, any>
-): string {
-  return template.replace(/{{(.*?)}}/g, (_, key) => {
-    const trimmedKey = key.trim();
-    const value = values[trimmedKey];
-    return typeof value === "string" ? value : JSON.stringify(value);
-  });
-}
+
 
 export const generateNextResponse = async (object: any): Promise<string> => {
   const prompt = prompts.find((p) => p.name === "GET_NEXT_RESPONSE");

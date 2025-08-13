@@ -3,7 +3,8 @@ import prompts from "../../config/promptTemplates";
 import { callOpenAI } from "../openai/index";
 
 export const generateEnhancedPrompt = async (
-  description: string
+  idea: string,
+  answers: any
 ): Promise<string> => {
   const prompt = prompts.find((p) => p.name === "REFINE_PROMPT");
   if (!prompt) {
@@ -12,11 +13,20 @@ export const generateEnhancedPrompt = async (
 
   const { system, user } = prompt;
   if (!system?.message || !user?.message) {
+
+
+
+
+
+
+
     throw new Error(
       "REFINE_PROMPT is missing 'system' or 'user' message template."
     );
   }
-  const userMessage = user.message.replace("{{description}}", description);
+  let userMessage = user.message.replace("{{idea}}", idea);
+  // userMessage = user.message.replace("{{answers}}", answers);
+
   const systemMessage = system.message;
 
   const messages = [

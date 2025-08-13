@@ -6,6 +6,7 @@ import {
 } from "../../../middlewares/resHandler";
 import { object } from "joi";
 import { generateNextResponse } from "../../openai/generateResponse";
+import { getTopicsCoveredFromIdea } from "../../openai/getTopicsCovered";
 function getTopicsCovered(answers: any) {
   return answers.map((answer: any) => answer.topic);
 }
@@ -15,7 +16,7 @@ export const getNextResponse = async (
   res: Response,
   next: NextFunction
 ): Promise<Response> => {
-  const { idea, answers } = req.body;
+  const { idea, answers, topics } = req.body;
   console.log("answersanswers", answers);
   console.log("ideaidea", idea);
 
@@ -74,15 +75,27 @@ export const getNextResponse = async (
   // };
 
   try {
-    let topics_covered = [];
-    if (answers?.length) {
-      topics_covered = getTopicsCovered(answers);
+    let topics_covered = topics;
+    if (answers?.length > 0) {
+ topics_covered = [
+  ...new Set([
+    ...topics_covered,
+    ...getTopicsCovered(answers)
+  ])
+];    } else {
+      const responseFromTopics = (await getTopicsCoveredFromIdea(idea)) as any;
+      const parsedResponse = JSON.parse(responseFromTopics) || [];
+      topics_covered = parsedResponse.topics_covered || [];
+
+      console.log("topics_covered_from_idea", topics_covered);
     }
     const objectToSend = {
       idea: idea,
       answers: answers,
       topics_covered: topics_covered,
     };
+    console.log("topics_coveredtopics_covered", topics_covered);
+
     const rawOutput = (await generateNextResponse(objectToSend)) as any;
     console.log("rawOutput", rawOutput);
     const response = JSON.parse(rawOutput);
@@ -93,6 +106,7 @@ export const getNextResponse = async (
       question: response?.questions,
       refinedDescription: response?.refinedDescription,
       finalPrompt: response?.finalPrompt,
+      topics: topics_covered,
     });
   } catch (error) {
     return sendServerError(res, error);
