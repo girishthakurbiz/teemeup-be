@@ -3,8 +3,19 @@ export function replacePlaceholders(
   values: Record<string, any>
 ): string {
   return template.replace(/{{(.*?)}}/g, (_, key) => {
-    const trimmedKey = key.trim();
-    const value = values[trimmedKey];
-    return typeof value === "string" ? value : JSON.stringify(value);
+    const path = key.trim().split('.');
+    let value = values;
+
+    for (const part of path) {
+      const match = part.match(/^(\w+)\[(\d+)\]$/);
+      if (match) {
+        const [, arrKey, index] = match;
+        value = value?.[arrKey]?.[parseInt(index, 10)];
+      } else {
+        value = value?.[part];
+      }
+    }
+
+    return typeof value === "string" ? value : JSON.stringify(value, null, 2);
   });
 }

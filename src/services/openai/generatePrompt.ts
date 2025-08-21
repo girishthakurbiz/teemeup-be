@@ -1,4 +1,5 @@
 import prompts from "../../config/promptTemplates";
+import { replacePlaceholders } from "../CreateDesign/helpers/utils";
 
 import { callOpenAI } from "../openai/index";
 
@@ -13,19 +14,17 @@ export const generateEnhancedPrompt = async (
 
   const { system, user } = prompt;
   if (!system?.message || !user?.message) {
-
-
-
-
-
-
-
     throw new Error(
       "REFINE_PROMPT is missing 'system' or 'user' message template."
     );
   }
-  let userMessage = user.message.replace("{{idea}}", idea);
-  // userMessage = user.message.replace("{{answers}}", answers);
+  const objectToSend = {
+    idea: idea,
+    answers: answers,
+  };
+  console.log("objectToSend", objectToSend);
+  console.log("user.message",user.message)
+const userMessage = replacePlaceholders(user.message, { objectToSend });
 
   const systemMessage = system.message;
 
@@ -33,7 +32,8 @@ export const generateEnhancedPrompt = async (
     { role: "system", content: systemMessage },
     { role: "user", content: userMessage },
   ];
-
+  console.log("systemsystem", systemMessage);
+  console.log("useruser", userMessage);
   try {
     const response = await callOpenAI(messages);
     return response;

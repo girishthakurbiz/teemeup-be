@@ -24,7 +24,10 @@ export const generateNextResponse = async (object: any): Promise<string> => {
   const messages = [
     { role: "system", content: systemMessage },
     { role: "user", content: userMessage },
-  ];
+  ];  
+  console.log("objesystemMessagect11", systemMessage);
+
+  console.log("userMessageuserMessage", userMessage);
 
   try {
     const response = await callOpenAI(messages);
