@@ -31,7 +31,6 @@ Ask only the first design aspect in the fixed order not present in topics_covere
 
 Never ask about a topic if:
 It appears in the topics_covered array (which contains unique covered topics including all 6 aspects).
-It has status "answered" or "skipped" in the answers array.
 It is clearly expressed in the idea.
 If all 6 topics are covered (via topics_covered + answers), do not ask further questions; return an empty questions object.
 
@@ -86,7 +85,6 @@ Theme → Visual Style → Scene or Action → Color Mood → Text → Audience
 }
 Never Repeat or re-ask any topic that:
   Appears in this array: {{topics_covered}} array
-  Or Is marked "answered" or "skipped" in {{answers}} array 
 
 🛠 Instructions
 🎯 How to Choose the Next Question:
@@ -106,11 +104,12 @@ Final refinedDescription
 Final finalPrompt
 }
 
+
 ❌ Never ask about a topic if any of the following is true:
-It has status: "answered" or status: "skipped" in the answers array
 It appears in the topics_covered array
-It is clearly expressed in the idea
+
 Do not include any emojis or special characters outside the JSON string.
+
 `,
       keys: ["topics_covered", "answers", "idea"],
     },
