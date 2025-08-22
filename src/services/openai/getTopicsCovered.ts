@@ -1,5 +1,5 @@
 import { callOpenAI } from ".";
-import prompts from "../../config/promptTemplates";
+import prompts from "../../common/config/promptTemplates";
 import { replacePlaceholders } from "../CreateDesign/helpers/utils";
 
 export const getTopicsCoveredFromIdea = async (idea: any): Promise<string> => {

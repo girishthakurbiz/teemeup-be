@@ -1,4 +1,4 @@
-import prompts from "../../config/promptTemplates";
+import prompts from "../../common/config/promptTemplates";
 import { replacePlaceholders } from "../CreateDesign/helpers/utils";
 
 import { callOpenAI } from "../openai/index";

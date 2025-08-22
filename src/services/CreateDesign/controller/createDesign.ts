@@ -5,7 +5,6 @@ import {
   successHandler,
 } from "../../../middlewares/resHandler";
 import { generateEnhancedPrompt } from "../../openai/generatePrompt";
-import { dispatchToolByCategory } from "../../../tools/dispatcher";
 
 interface EnhancedPrompt {
   refined_description: string;
@@ -42,15 +41,7 @@ export const generateImagePrompt = async (
     }
     let toolResult;
 
-    // try {
-    //   toolResult = await dispatchToolByCategory(category_name, final_prompt);
-    // } catch (toolErr) {
-    //   return sendServerError(
-    //     res,
-    //     toolErr,
-    //     "Failed to generate image using selected tool."
-    //   );
-    // }
+
     console.log("toolResult", toolResult);
 
     return successHandler(res, {

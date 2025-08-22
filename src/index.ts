@@ -7,7 +7,6 @@ import { errorHandler } from "./middlewares/resHandler";
 import utilRouter from "./services/UtilService/router";
 // import userImageRouter from "./services/GetDesign/router";
 import createDesignRouter from "./services/CreateDesign/router";
-import { fetchAndStoreModels } from "./utils/fetchAndStoreModels";
 import { setupSocket } from "./services/sockets/socket"; // 👈 import socket handler
 import { createServer } from "http";
 import { Server } from "socket.io";
@@ -41,7 +40,6 @@ const io = new Server(httpServer, {
 setupSocket(io); // 👈 initialize socket logic
 (async () => {
   try {
-    // await fetchAndStoreModels(); // fetch from Leonardo and store in toolMap file
     console.log("Model data fetched and stored.");
 
     httpServer.listen(port, () => {
