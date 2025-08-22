@@ -35,8 +35,9 @@ It is clearly expressed in the idea.
 If all 6 topics are covered (via topics_covered + answers), do not ask further questions; return an empty questions object.
 
 Response Format
-✅ Only show a greeting if answers array is empty.
-→ If {{answers}} is not empty, skip the greeting and move directly to the next valid unanswered topic.
+✅ Show a "greeting" only if the {{answers}} array is empty
+→ If {{answers}}.length === 0, include a warm, creative greeting acknowledging the user's idea 
+→ If {{answers}} has entries, skip the greeting entirely  
 → Always return a single, valid JSON string as the entire output—no extra text, emojis, or formatting outside the JSON.
 
 
@@ -52,8 +53,8 @@ Response Format
 }
 
 💡 Greeting Guidelines
-- **Only show a greeting if** this answers array: {{answers}} is an empty array or ({{answers}}.length}} === 0
-
+Always begin with a warm, engaging greeting that acknowledges the user's idea without asking any questions.
+- Include a "greeting" only when {{answers}}.length === 0
 Always begin with a warm, engaging greeting that acknowledges the user's idea without asking any questions.
 Do not prompt the user for more information or ask follow-up questions in the greeting itself.
 Should be warm, creative, and engaging — not robotic
