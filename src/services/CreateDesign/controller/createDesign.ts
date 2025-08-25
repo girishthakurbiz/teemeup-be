@@ -1,29 +1,56 @@
-import { NextFunction, Request, Response } from "express";
-import { successHandler } from "../../../middlewares/resHandler";
+import { Request, Response, NextFunction } from "express";
+import {
+  sendClientError,
+  sendServerError,
+  successHandler,
+} from "../../../middlewares/resHandler";
+import { generateEnhancedPrompt } from "../../openai/generatePrompt";
 
-export const createImage = async (
+interface EnhancedPrompt {
+  refined_description: string;
+  audience_inference: string; // category
+  design_type: "Visual" | "Text-Based" | "Hybrid";
+  final_prompt: string;
+  category_name: string; // Mapped category from predefined list
+}
+
+export const generateImagePrompt = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
-  // const { prompt } = req.params;
-  const { prompt } = req.body;
+): Promise<Response> => {
+  const { idea, answers, topics } = req.body;
+
+  if (typeof idea !== "string" || !idea.trim()) {
+    return sendClientError(res, "Missing or invalid 'idea' in request body.");
+  }
   try {
-    if (!prompt) {
-      res.status(400).json({ message: "Please provide a prompt" });
+    const rawOutput = await generateEnhancedPrompt(idea, answers);
+
+    let enhancedPrompt: EnhancedPrompt;
+    try {
+      enhancedPrompt = JSON.parse(rawOutput);
+      console.log("enhancedPrompt", enhancedPrompt);
+    } catch (parseErr) {
+      console.error("Failed to parse OpenAI response:", parseErr);
+      return sendServerError(
+        res,
+        parseErr,
+        "Invalid response format from OpenAI."
+      );
     }
-    successHandler(
-      {
-        data: {
-          design_id: "design_id",
-        },
+    let toolResult;
+
+
+    console.log("toolResult", toolResult);
+
+    return successHandler(res, {
+      data: {
+        design_id: "design_id", // Replace with real ID if available
+        enhancedPrompt : enhancedPrompt,
       },
-      req,
-      res,
-      next
-    );
-    return;
+    });
   } catch (error) {
-    next(error);
+    return sendServerError(res, error);
   }
 };

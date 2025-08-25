@@ -3,6 +3,5 @@ import { Router } from "express";
 
 const getImageLink = Router();
 
-// userImageRouter.get("/createImage", createImage);
 
 export default getImageLink;
