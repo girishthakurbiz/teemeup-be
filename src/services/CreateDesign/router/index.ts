@@ -1,8 +1,10 @@
 import { Router } from "express";
-import { createImage } from "../controller/createDesign";
+import { generateImagePrompt } from "../controller/createDesign";
+import { getNextResponse } from "../controller/getNextResponse";
 
-const createDesignRouter = Router();
+const createDesignRouter = Router(); 
 
-createDesignRouter.get("/createImage", createImage);
+createDesignRouter.post("/generateEnhancedPrompt", generateImagePrompt); 
+createDesignRouter.post("/getNextResponse", getNextResponse); 
 
 export default createDesignRouter;
