@@ -5,7 +5,9 @@ import { callOpenAI } from "../openai/index";
 
 export const generateEnhancedPrompt = async (
   idea: string,
-  answers: any
+  answers: any,
+  backgroundColor: string,
+  productType: string
 ): Promise<string> => {
   const prompt = prompts.find((p) => p.name === "REFINE_PROMPT");
   if (!prompt) {
@@ -21,10 +23,12 @@ export const generateEnhancedPrompt = async (
   const objectToSend = {
     idea: idea,
     answers: answers,
+    backgroundColor,
+    productType,
   };
   console.log("objectToSend", objectToSend);
-  console.log("user.message",user.message)
-const userMessage = replacePlaceholders(user.message, { objectToSend });
+  console.log("user.message", user.message);
+  const userMessage = replacePlaceholders(user.message, { objectToSend });
 
   const systemMessage = system.message;
 
