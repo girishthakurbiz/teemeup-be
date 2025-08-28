@@ -16,9 +16,11 @@ export const getNextResponse = async (
   res: Response,
   next: NextFunction
 ): Promise<Response> => {
-  const { idea, answers, topics } = req.body;
+  const { idea, answers, topics, productType, color } = req.body;
   console.log("answersanswers", answers);
   console.log("ideaidea", idea);
+  console.log("productType", productType);
+  console.log("color", color);
 
   // const payload = {
   //   idea: "a cat",
