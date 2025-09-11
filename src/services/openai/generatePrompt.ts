@@ -7,7 +7,8 @@ export const generateEnhancedPrompt = async (
   idea: string,
   answers: any,
   backgroundColor: string,
-  productType: string
+  productType: string,
+  user_inputs?: string[]  
 ): Promise<string> => {
   const prompt = prompts.find((p) => p.name === "REFINE_PROMPT");
   if (!prompt) {
@@ -25,19 +26,17 @@ export const generateEnhancedPrompt = async (
     answers: answers,
     backgroundColor,
     productType,
+    user_inputs: user_inputs || [],
   };
-  console.log("objectToSend", objectToSend);
-  console.log("user.message", user.message);
-  const userMessage = replacePlaceholders(user.message, { objectToSend });
 
+  const userMessage = replacePlaceholders(user.message, { objectToSend });
   const systemMessage = system.message;
 
   const messages = [
     { role: "system", content: systemMessage },
     { role: "user", content: userMessage },
   ];
-  console.log("systemsystem", systemMessage);
-  console.log("useruser", userMessage);
+
   try {
     const response = await callOpenAI(messages);
     return response;
