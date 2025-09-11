@@ -16,7 +16,6 @@ export const generateNextResponse = async (object: any): Promise<string> => {
       "GET_NEXT_RESPONSE is missing 'system' or 'user' message template."
     );
   }
-  console.log("object11", object);
   const systemMessage = replacePlaceholders(system.message, object);
 
   const userMessage = replacePlaceholders(user.message, { object }); // wrap in object if using {{object}}
@@ -25,9 +24,6 @@ export const generateNextResponse = async (object: any): Promise<string> => {
     { role: "system", content: systemMessage },
     { role: "user", content: userMessage },
   ];  
-  console.log("objesystemMessagect11", systemMessage);
-
-  console.log("userMessageuserMessage", userMessage);
 
   try {
     const response = await callOpenAI(messages);
