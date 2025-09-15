@@ -30,8 +30,7 @@ export const generateEnhancedPrompt = async (
   };
 
   const userMessage = replacePlaceholders(user.message, { objectToSend });
-  const systemMessage = system.message;
-
+  const systemMessage = replacePlaceholders(system.message, objectToSend);
   const messages = [
     { role: "system", content: systemMessage },
     { role: "user", content: userMessage },
