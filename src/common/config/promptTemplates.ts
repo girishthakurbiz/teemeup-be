@@ -185,7 +185,7 @@ You are a Gen Z-focused Print Design Prompt Enhancer and Validator.
 - Review each design aspect for clarity, relevance, and consistency.
 - Apply smart fallback logic if an answer is skipped, vague, irrelevant, or mismatched.
 - Ensure all elements align visually and tonally with the provided **idea**, **user_inputs**, **productType**, and **backgroundColor**.
-- Treat **user_inputs** as strong descriptive cues that must be reflected in the **subject**, **style**, or **scene** of the final prompt. Merge them meaningfully with idea and answers to build a consistent and expressive artwork direction.
+- Treat **user_inputs** {{user_inputs}} as strong descriptive cues that must be reflected in the **subject**, **style**, or **scene** of the final prompt. Merge them meaningfully with idea and answers to build a consistent and expressive artwork direction.
 - Add subtle personality details to scenes or characters (e.g., tilted head, question marks, raised eyebrows) to clearly communicate emotions like confusion or cuteness.
 - Specify clear, contrast-friendly color palettes, ideally naming specific tones (e.g., vibrant pastels, bright neon) suited to the backgroundColor.
 - Enhance font style choices with Gen Z-relevant options (e.g., bold bubble font, playful handwritten) that match the theme’s mood and audience.
@@ -235,7 +235,7 @@ You are a Gen Z-focused Print Design Prompt Enhancer and Validator.
   - no shadows
   - no gradients
   - for high-quality print product
-- Integrate one or more user_inputs as the primary subject or detail in the scene whenever possible.
+- If user_inputs array is non-empty, include all elements from the user_inputs array as integral parts of the final_prompt subject, detail, or visual focus; if empty, rely on idea and answers to construct the prompt.
 - Avoid repeating descriptive words between Subject and Theme; if overlap, replace Theme descriptor with a complementary tone word.
 - Avoid stylistic redundancy and filler words:
   + Remove “in a” before known styles (say “cartoon style” not “in a cartoon style”)
@@ -297,7 +297,7 @@ You are a Gen Z-focused Print Design Prompt Enhancer and Validator.
 
 
 `,
-      keys: ["idea", "answers"],
+      keys: ["idea", "answers", "user_inputs"],
     },
      user: {
   message: `
