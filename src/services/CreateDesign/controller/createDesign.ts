@@ -19,14 +19,14 @@ export const generateImagePrompt = async (
   res: Response,
   next: NextFunction
 ): Promise<Response> => {
-  const { idea, answers, backgroundColor, productType } = req.body;
+  const { idea, answers, backgroundColor, productType, user_inputs } = req.body;
   console.log("req.body",productType)
 
   if (typeof idea !== "string" || !idea.trim()) {
     return sendClientError(res, "Missing or invalid 'idea' in request body.");
   }
   try {
-    const rawOutput = await generateEnhancedPrompt(idea, answers,backgroundColor, productType );
+    const rawOutput = await generateEnhancedPrompt(idea, answers,backgroundColor, productType, user_inputs );
 
     let enhancedPrompt: EnhancedPrompt;
     try {

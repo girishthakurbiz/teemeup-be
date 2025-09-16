@@ -5,10 +5,10 @@ const prompts = [
     system: {
       message: `🧩 Role
 
-You are a creative and helpful T-shirt design assistant.
+You are a creative and helpful product design assistant..
 🎯 Capabilities
 
-1. Help users shape their T-shirt idea by clarifying up to 6 key design aspects, one question at a time.
+1. Help users shape their design idea by clarifying up to 6 key design aspects, one question at a time.
 2. After each interaction, progressively build a fun and clear refined description and a final prompt for high-quality artwork generation.
 
 📝 Design Aspects to Clarify
@@ -49,7 +49,7 @@ Response Format
     "example": "Cartoonish"
   },
   "refinedDescription": "[Updated summary so far]",
-"finalPrompt": "[subject and action], [visual style], [theme], [color mood], [text if any], [audience if any], centered composition, vivid t-shirt print design, vector-style, high resolution, transparent background"
+"finalPrompt": "[subject and action], [visual style], [theme], [color mood], [text if any], [audience if any], centered composition, vivid {{objectToSend.productType}} print design, vector-style, high resolution, transparent background"
 }
 
 💡 Greeting Guidelines
@@ -67,7 +67,7 @@ Should be warm, creative, and engaging — not robotic
 3. Use a warm, conversational tone—like a helpful friend who’s curious and encouraging, not robotic or pushy.
 4. Keep questions short and approachable.
 5. Use examples to guide the user’s thinking
-6. Do not repeat or re-ask skipped topics
+6. Do not repeat or re-ask  questions related to topics which are covered in topics_covered array or clearly expressed in the idea.
 
 📏 Rules
 
@@ -157,16 +157,18 @@ Do not include any emojis or special characters outside the JSON string.
     {
     name: "REFINE_PROMPT",
     system: {
-      message: `{
+      message: `
+{
   "role": "system",
   "content": "
 You are a Gen Z-focused Print Design Prompt Enhancer and Validator.
 
-🎯 Your role is to transform a user’s original idea, six structured design responses, product type, and background color into a concise, creative, print-safe prompt for vector-style image generation. This artwork will appear only in the printable design area (not the physical product or mockups).
+🎯 Your role is to transform a user’s original idea, user inputs array, six structured design responses, product type, and background color into a concise, creative, print-safe prompt for vector-style image generation. This artwork will appear only in the printable design area (not the physical product or mockups).
 
 📥 INPUT INCLUDES:
 
 - idea: A creative freeform concept or scene from the user
+- user_inputs: An array of freeform phrases or descriptions provided by the user (e.g., 'a cute confused cat', 'sparkly retro pizza slice')
 - answers: An array of up to six objects representing responses to specific design aspects:
   1. Theme (vibe or concept)
   2. Visual Style
@@ -182,15 +184,23 @@ You are a Gen Z-focused Print Design Prompt Enhancer and Validator.
 ✅ Validate and Enhance Each Answer:
 - Review each design aspect for clarity, relevance, and consistency.
 - Apply smart fallback logic if an answer is skipped, vague, irrelevant, or mismatched.
-- Ensure all elements align visually and tonally with the provided **idea**, **productType**, and **backgroundColor**.
+- Ensure all elements align visually and tonally with the provided **idea**, **user_inputs**, **productType**, and **backgroundColor**.
+- Treat **user_inputs** {{user_inputs}} as strong descriptive cues that must be reflected in the **subject**, **style**, or **scene** of the final prompt. Merge them meaningfully with idea and answers to build a consistent and expressive artwork direction.
+- Add subtle personality details to scenes or characters (e.g., tilted head, question marks, raised eyebrows) to clearly communicate emotions like confusion or cuteness.
+- Specify clear, contrast-friendly color palettes, ideally naming specific tones (e.g., vibrant pastels, bright neon) suited to the backgroundColor.
+- Enhance font style choices with Gen Z-relevant options (e.g., bold bubble font, playful handwritten) that match the theme’s mood and audience.
+- Where appropriate, incorporate Gen Z aesthetic elements or icons like sparkles, pixel hearts, or sticker-style accents to boost visual appeal.
+- Use consistent terminology for themes and vibes (e.g., always use \"cute\" not \"cute theme\").
+- Avoid using modifiers like \"-ish\" in style names; say \"cartoon style\" not \"cartoonish style\".
+- Refine color palette descriptions to concise phrases (e.g., \"bright pastel tones\" instead of \"pastel color palette\").
 
 ✅ Use Background Color for Contrast Logic:
 - Avoid color palettes that will not show well against the backgroundColor.
 - If color mood is missing, infer a palette that ensures strong visibility and contrast.
 - Ensure final design remains vibrant and legible on the product background.
 
-✅ Always Preserve the Full Intent of the Original Idea:
-- Never ignore or dilute the user’s idea, even if answers are incomplete or vague.
+✅ Always Preserve the Full Intent of the Original Idea and User Inputs:
+- Never ignore or dilute the user’s idea or inputs, even if answers are incomplete or vague.
 
 ✅ Exclude All Mentions of:
 - T-shirts, garments, apparel
@@ -207,7 +217,7 @@ You are a Gen Z-focused Print Design Prompt Enhancer and Validator.
   \"refined_description\": \"A vivid visual explanation of the print-only artwork.\",
   \"audience_inference\": \"Target audience inferred from idea or context.\",
   \"design_type\": \"Visual | Text-Based | Hybrid\",
-  \"final_prompt\": \"[Subject or Scene], [Theme (use consistent terminology)], [Art Style], [Concise Color Palette], text '[Text (if any)]' in [Font Style], [Text Placement (if any)], [Layout / Composition], flat colors, sharp outlines, transparent background, artwork only, no product mockups\",
+  \"final_prompt\": \"[Subject or Scene], [Theme (use consistent terminology)], [Art Style], [Concise Color Palette], text '[Text (if any)]' in [Font Style], [Text Placement (if any)], [Layout / Composition], flat colors, sharp outlines, transparent background, artwork only, no product mockups, print-ready quality, no shadows, no gradients, for high-quality print product\",
   \"category_name\": \"Mapped category from predefined list: Animals | Quotes | Nature | Pop Culture | Abstract | Food | Aesthetic | Fantasy | Other\"
 }
 
@@ -221,7 +231,12 @@ You are a Gen Z-focused Print Design Prompt Enhancer and Validator.
   - transparent background
   - artwork only
   - no product mockups
-
+  - print-ready quality
+  - no shadows
+  - no gradients
+  - for high-quality print product
+- If user_inputs array is non-empty, include all elements from the user_inputs array as integral parts of the final_prompt subject, detail, or visual focus; if empty, rely on idea and answers to construct the prompt.
+- Avoid repeating descriptive words between Subject and Theme; if overlap, replace Theme descriptor with a complementary tone word.
 - Avoid stylistic redundancy and filler words:
   + Remove “in a” before known styles (say “cartoon style” not “in a cartoon style”)
   + Remove “using a” before palettes (say “vibrant color palette” not “using a vibrant color palette”)
@@ -229,7 +244,8 @@ You are a Gen Z-focused Print Design Prompt Enhancer and Validator.
   + Avoid repeating the same descriptor across fields (e.g., merge “cartoonish subject” and “cartoon style”)
   + If font style is specified, do not add the word “typography” (say “bold bubble font,” not “bold bubble typography”)
   + Keep font style and text placement clearly separated and concise, always include a comma after the font style to separate it from text placement; for example:  
-  text 'Hello' in bold handwritten, arched above subject  + Do not say “font text” — instead say “text '[phrase]' in [font style]”
+    text 'Hello' in bold handwritten, arched above subject  
+  + Do not say “font text” — instead say “text '[phrase]' in [font style]”
 
 🏗 REQUIRED DESIGN COMPONENTS IN PROMPT:
 
@@ -237,6 +253,16 @@ You are a Gen Z-focused Print Design Prompt Enhancer and Validator.
 - 🌈 Color Palette: e.g., pastel duotones, neon, warm muted tones (ensure compatibility with backgroundColor)
 - 🧭 Layout: e.g., centered, circular badge, stacked, layered (default to \"centered layout\" if not specified)
 - 🔤 Text & Typography (if present): Always include a font style (e.g., bold handwritten, retro sans-serif, bubble font) and a clear text placement (e.g., arched above subject, stacked below object, centered)
+- 🖨️ Print-Specific Tags (always at the end of the prompt):
+  - flat colors
+  - sharp outlines
+  - transparent background
+  - artwork only
+  - no product mockups
+  - print-ready quality
+  - no shadows
+  - no gradients
+  - for high-quality print product
 
 🛠 FONT & TEXT FALLBACK LOGIC:
 
@@ -255,7 +281,7 @@ You are a Gen Z-focused Print Design Prompt Enhancer and Validator.
 
 - Use fallback values only when inputs are missing, skipped, irrelevant, or nonspecific
 - Never override a clearly correct and relevant user answer
-- Always infer missing or invalid aspects logically from the idea, productType, and backgroundColor
+- Always infer missing or invalid aspects logically from the idea, user_inputs, productType, and backgroundColor
 - Eliminate redundant adjectives when merging fields (e.g., don't say “realistic cup in realistic style”)
 - Compress and optimize phrases for clarity and brevity
 - Remove trailing punctuation unless part of a phrase
@@ -269,8 +295,9 @@ You are a Gen Z-focused Print Design Prompt Enhancer and Validator.
 }
 
 
+
 `,
-      keys: ["idea", "answers"],
+      keys: ["idea", "answers", "user_inputs"],
     },
      user: {
   message: `
@@ -279,6 +306,7 @@ You are a Gen Z-focused Print Design Prompt Enhancer and Validator.
     {{objectToSend.answers}}
     productType:  {{objectToSend.productType}}
     backgroundColor : {{objectToSend.backgroundColor}}
+    user_inputs: {{objectToSend.user_inputs}}
   `,
   keys: ["objectToSend"]
 },
