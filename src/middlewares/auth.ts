@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import pool from "../db";
+// import pool from "../db";
 
 const signUid = (value: object) => {
   return jwt.sign({ value }, process.env.JWTSECRET || "secret", {
@@ -39,27 +39,27 @@ const authorize = (roles: string[]) => {
         return res.status(401).json({ message: "Session Expired" });
       }
 
-      const result = await pool.query(
-        'select * from "highonbuzzSchema".users where id=$1',
-        [token.value.id]
-      );
+      // const result = await pool.query(
+      //   'select * from "highonbuzzSchema".users where id=$1',
+      //   [token.value.id]
+      // );
 
-      const user = result?.rows[0];
+      // const user = result?.rows[0];
 
-      if (!user) {
-        return res.status(401).json({ message: "No User Found" });
-      }
+      // if (!user) {
+      //   return res.status(401).json({ message: "No User Found" });
+      // }
 
-      const hasAccess = roles.find((role) => role === user.role);
+      // const hasAccess = roles.find((role) => role === user.role);
 
-      if (!hasAccess) {
-        return res.status(403).json({ message: "Forbbiden" });
-      }
+      // if (!hasAccess) {
+      //   return res.status(403).json({ message: "Forbbiden" });
+      // }
 
-      // Delete sensitive information before sending the data object
-      delete user.password;
+      // // Delete sensitive information before sending the data object
+      // delete user.password;
 
-      (req as any).user = user;
+      // (req as any).user = user;
       next();
     }
   };

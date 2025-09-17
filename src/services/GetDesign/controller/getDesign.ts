@@ -12,16 +12,16 @@ export const getImage = async (
     if (!design_id) {
       res.status(400).json({ message: "Please provide a design id" });
     }
-    successHandler(
-      {
-        data: {
-          design_link: "design_link",
-        },
-      },
-      req,
-      res,
-      next
-    );
+    // successHandler(
+    //   {
+    //     data: {
+    //       design_link: "design_link",
+    //     },
+    //   },
+    //   req,
+    //   res,
+    //   next
+    // );
     return;
   } catch (error) {
     next(error);
