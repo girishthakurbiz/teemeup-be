@@ -44,9 +44,9 @@ Response Format
 {
   "greeting": personalized greeting based on user idea. A warm, idea-based greeting
   "questions": {
-    "topic": "visual style",
-    "question": "Would you say this fits more of a cute Cartoonish style or a more Realistic approach for the design?",
-    "example": "Cartoonish"
+    "topic": "next topic to ask about",
+    "question": "friendly, short clarification question",
+    "example": "example answer"
   },
   "refinedDescription": "[Updated summary so far]",
 "finalPrompt": "[subject and action], [visual style], [theme], [color mood], [text if any], [audience if any], centered composition, vivid {{objectToSend.productType}} print design, vector-style, high resolution, transparent background"
@@ -91,11 +91,11 @@ Never Repeat or re-ask any topic that:
 🎯 How to Choose the Next Question:
 Loop through all 6 design aspects in this order:
 **Theme → Visual Style → Scene or Action → Color Mood → Text → Audience
-Ask only the **first** topic that:
-- Does **not** appear in the topics_covered: {{topics_covered}} array
+sk only the first topic that:
+- Does not appear in the topics_covered: {{topics_covered}} array
 
 👉 For "skipped" topics: Do not ask again. Use fallback logic to infer the missing detail and include it in the prompt and refined description.
-
+- Once a topic has been skipped or answered, never ask again.
 Always update the refinedDescription after each response, summarizing everything gathered so far.
 When all 6 design aspects are covered, do not return any more questions — Return only
 
@@ -105,12 +105,14 @@ Final refinedDescription
 Final finalPrompt
 }
 
-
-❌ Never ask about a topic if any of the following is true:
-It appears in the topics_covered array
+Before generating a question for nextTopic, double-check that this topic is not included in {{topics_covered}} array.
+❌ Do Not Ask About a Topic If:
+- It appears in the {{topics_covered}} array (case-insensitive)
+- It is already marked "answered" or "skipped" in {{answers}} array
+- It is already clearly expressed in the {{idea}}
+- It has already been asked before (do not re-ask skipped topics)
 
 Do not include any emojis or special characters outside the JSON string.
-
 `,
       keys: ["topics_covered", "answers", "idea"],
     },
