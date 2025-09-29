@@ -27,7 +27,6 @@ export const generateNextResponse = async (object: any): Promise<string> => {
 
   try {
     const response = await callOpenAI(messages);
-    console.log("response1122", response);
     return response;
   } catch (error: any) {
     console.error("OpenAI API Error:", error.response?.data || error.message);

@@ -20,7 +20,6 @@ export const generateImagePrompt = async (
   next: NextFunction
 ): Promise<Response> => {
   const { idea, answers, backgroundColor, productType, user_inputs } = req.body;
-  console.log("req.body",productType)
 
   if (typeof idea !== "string" || !idea.trim()) {
     return sendClientError(res, "Missing or invalid 'idea' in request body.");
@@ -31,7 +30,6 @@ export const generateImagePrompt = async (
     let enhancedPrompt: EnhancedPrompt;
     try {
       enhancedPrompt = JSON.parse(rawOutput);
-      console.log("enhancedPrompt", enhancedPrompt);
     } catch (parseErr) {
       console.error("Failed to parse OpenAI response:", parseErr);
       return sendServerError(
@@ -41,10 +39,6 @@ export const generateImagePrompt = async (
       );
     }
     let toolResult;
-
-
-    console.log("toolResult", toolResult);
-
     return successHandler(res, {
       data: {
         design_id: "design_id", // Replace with real ID if available
