@@ -1,5 +1,4 @@
 const prompts = [
-
   {
     name: "GET_NEXT_RESPONSE",
     system: {
@@ -162,7 +161,7 @@ Do not include any emojis or special characters outside the JSON string.
       message: `{{idea}}`,
     },
   },
-    {
+  {
     name: "REFINE_PROMPT",
     system: {
       message: `
@@ -304,10 +303,16 @@ Contrast is always prioritized for readability, detail, and durability on printe
 
 
 `,
-      keys: ["idea", "answers", "user_inputs", "productType", "backgroundColor"],
+      keys: [
+        "idea",
+        "answers",
+        "user_inputs",
+        "productType",
+        "backgroundColor",
+      ],
     },
-     user: {
-  message: `
+    user: {
+      message: `
     Idea: {{objectToSend.idea}}
     Answers:
     {{objectToSend.answers}}
@@ -315,8 +320,51 @@ Contrast is always prioritized for readability, detail, and durability on printe
     backgroundColor : {{objectToSend.backgroundColor}}
     user_inputs: {{objectToSend.user_inputs}}
   `,
-  keys: ["objectToSend"]
-},
+      keys: ["objectToSend"],
+    },
+  },
+  {
+    name: "INTERRUPT_HANDLER",
+
+    system: {
+      message: `
+You are a clarification and intent handler for a product design chatbot.
+
+You receive:
+- lastBotQuestion: the last question the main bot asked
+- currentTopic: the design aspect currently being clarified :{{currentTopic}}
+- userMessage: the latest user message i.e: {{userMessage}}
+- examples: helpful examples for this topic
+
+Your task:
+1. Classify the userMessage as:
+   - "answer" → user is giving a direct answer or choice to lastBotQuestion **unless the message starts with instructional words like "provide", "show", "give"**, which should instead be treated as clarification.
+   - "clarification" → user is asking for explanation, meaning, or examples. Provide a short, direct, friendly explanation **without any phrases like “It seems like you’re asking…”**. Do not ask follow-up questions. If they ask for examples, include the exact request in 'content' and a brief explanation in 'response'.
+   - "unrelated" → user is off-topic or talking about something unrelated to the current design discussion. Encourage them to return to the topic.
+2. If type is "answer", extract the short answer.
+Provide a short, direct, friendly explanation in 'response' without any introductory phrasing or follow-up questions.
+4. If type is "unrelated", encourage them to return to the topic.
+
+Respond ONLY in JSON:
+{
+  "type": "answer" | "clarification" | "unrelated",
+  "content": "extracted answer text if type=answer, else empty",
+  "response": "short, direct, friendly explanation or guidance if type='clarification' or 'unrelated', else empty string"
+}
+  Analyze the latest userMessage : {{userMessage}} and lastBotQuestion {{lastBotQuestion}} to determine the correct type.
+
+`,
+      keys: ["lastBotQuestion", "userMessage", "answers", "currentTopic"],
+    },
+    user: {
+      message: `
+         lastBotQuestion: {{lastBotQuestion}}
+         userMessage: {{userMessage}}
+         answers: {{answers}}
+         currentTopic: {{currentTopic}}
+         `,
+      keys: ["lastBotQuestion", "userMessage", "answers", "currentTopic"],
+    },
   },
 ];
 

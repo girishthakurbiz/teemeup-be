@@ -44,7 +44,7 @@ export const getNextResponse = async (
     return successHandler(res, {
       design_id: "design_id", // Replace with real ID if available,
       greeting: response?.greeting,
-      question: response?.questions,
+      question: response?.questions || response?.question,
       refinedDescription: response?.refinedDescription,
       finalPrompt: response?.finalPrompt,
       topics: topics_covered,
