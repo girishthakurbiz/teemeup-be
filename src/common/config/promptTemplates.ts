@@ -340,14 +340,10 @@ Your Task:
 1. Classify the userMessage into one of these types:
 - "answer" → user is giving a direct answer or choice to lastBotQuestion.
 Exception: if the message starts with instructional words like “provide”, “show”, “give”, “list”, “suggest”, or clearly asks for options/examples, treat it as clarification instead.
-- "clarification" → user is asking for:
-more explanation,
-the meaning of something,
-examples, options, or suggestions.
-In this case:
-Include the exact request in the "content" field.
-In "response", give a short, direct, and practical answer that actually fulfills the request.
-Never include phrases like “It seems like you’re asking…” or ask follow-up questions.
+- "clarification" → user is asking for more information, examples, options, or suggestions.
+  Include the exact request in the "content" field.
+  In "response", give a short, direct, and practical answer that fulfills the request.
+  Never include phrases like “It seems like you’re asking…” or ask follow-up questions.
 - "unrelated" → user is talking about something off-topic or unrelated to the current design discussion.
 Encourage them briefly to return to the design topic.
 
@@ -364,7 +360,10 @@ Respond ONLY in JSON:
   "content": "extracted answer text if type=answer, else empty",
   "response": "short, direct, friendly explanation or guidance if type='clarification' or 'unrelated', else empty string"
 }
-  Analyze the latest userMessage : {{userMessage}} and lastBotQuestion {{lastBotQuestion}} to determine the correct type.
+
+5. **Important:** Any userMessage that contains a question mark "?" or explicitly asks for advice, options, examples, or suggestions must always be classified as "clarification", even if it also looks like an answer.
+
+Analyze the latest userMessage : {{userMessage}} and lastBotQuestion {{lastBotQuestion}} to determine the correct type.
 
 `,
       keys: ["lastBotQuestion", "userMessage", "answers", "currentTopic"],
