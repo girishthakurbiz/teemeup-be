@@ -48,7 +48,7 @@ Response Format
     "example": "example answer"
   },
   "refinedDescription": "[Updated summary so far]",
-"finalPrompt":"[Subject or Scene], [Theme], [Visual Style], [Art Style], [Concise Color Palette for backgroundColor], text '[Text]' in [Font Style], [Text Placement or 'centered below subject'], [Layout / Composition], flat colors, sharp outlines, background [backgroundColor], artwork only, no product mockups, print-ready quality, no shadows, no gradients, for high-quality print product"
+"finalPrompt":"[Subject or Scene] based on the idea merged with Scene/Action answer, [Theme], [Visual Style], [Art Style], [Concise Color Palette for backgroundColor], text '[Text]' in [Font Style], [Text Placement or 'centered below subject'], [Layout / Composition], flat colors, sharp outlines, background [backgroundColor], artwork only, no product mockups, print-ready quality, no shadows, no gradients, for high-quality print product"
 
 
 💡 Greeting Guidelines
@@ -202,6 +202,7 @@ You are a Gen Z-focused Print Design Prompt Enhancer and Validator.
 
 
 ✅ Always Preserve the Full Intent of the Original Idea and User Inputs:
+- Always embed the idea {{idea}} as part of the subject or scene description, preferably at the start of the final_prompt
 - Never ignore or dilute the user’s idea or inputs, even if answers are incomplete or vague.
 
 ✅ Exclude All Mentions of:
@@ -219,7 +220,7 @@ You are a Gen Z-focused Print Design Prompt Enhancer and Validator.
   \"refined_description\": \"A vivid visual explanation of the print-only artwork.\",
   \"audience_inference\": \"Target audience inferred from idea or context.\",
   \"design_type\": \"Visual | Text-Based | Hybrid\",
-"final_prompt": "[Subject or Scene], [Theme], [Visual Style], [Art Style], [Concise Color Palette for backgroundColor], text '[Text]' in [Font Style], [Text Placement or 'centered below subject'], [Layout / Composition], flat colors, sharp outlines, background [backgroundColor], artwork only, no product mockups, print-ready quality, no shadows, no gradients, for high-quality print product"
+  \"final_prompt"\: "[Subject or Scene] based on the idea merged with Scene/Action answer, [Theme], [Visual Style], [Art Style], [Concise Color Palette for backgroundColor], text '[Text]' in [Font Style], [Text Placement or 'centered below subject'], [Layout / Composition], flat colors, sharp outlines, background [backgroundColor], artwork only, no product mockups, print-ready quality, no shadows, no gradients, for high-quality print product"
   \"category_name\": \"Mapped category from predefined list: Animals | Quotes | Nature | Pop Culture | Abstract | Food | Aesthetic | Fantasy | Other\"
 }
 
@@ -291,6 +292,7 @@ Contrast is always prioritized for readability, detail, and durability on printe
 - Eliminate redundant adjectives when merging fields (e.g., don't say “realistic cup in realistic style”)
 - Compress and optimize phrases for clarity and brevity
 - Remove trailing punctuation unless part of a phrase
+- 
 
 ✅ JSON VALIDATION RULES:
 
@@ -339,6 +341,7 @@ You receive:
 Your Task:
 1. Classify the userMessage into one of these types:
 - "answer" → user is giving a direct answer or choice to lastBotQuestion.
+This includes affirmative or negative responses (e.g. “yes”, “no”, “none”, “nothing”, “skip it”, “no need”, “without text”, “not really”, etc.).
 Exception: if the message starts with instructional words like “provide”, “show”, “give”, “list”, “suggest”, or clearly asks for options/examples, treat it as clarification instead.
 - "clarification" → user is asking for more information, examples, options, or suggestions.
   Include the exact request in the "content" field.
@@ -361,9 +364,10 @@ Respond ONLY in JSON:
   "response": "short, direct, friendly explanation or guidance if type='clarification' or 'unrelated', else empty string"
 }
 
-5. **Important:** Any userMessage that contains a question mark "?" or explicitly asks for advice, options, examples, or suggestions must always be classified as "clarification", even if it also looks like an answer.
-
-Analyze the latest userMessage : {{userMessage}} and lastBotQuestion {{lastBotQuestion}} to determine the correct type.
+5.Important rules:
+- Any userMessage that contains a question mark "?" or explicitly asks for advice, options, examples, or suggestions must always be classified as "clarification", even if it also looks like an answer.
+- If the message expresses refusal, negation, or minimal response that still answers the question (e.g. “nothing”, “no”, “none”, “skip”), treat it as "answer".
+Analyze the latest userMessage : {{userMessage}} and lastBotQuestion : {{lastBotQuestion}} to determine the correct type.
 
 `,
       keys: ["lastBotQuestion", "userMessage", "answers", "currentTopic"],
