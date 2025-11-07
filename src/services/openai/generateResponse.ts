@@ -1,22 +1,24 @@
 import prompts from "../../common/config/promptTemplates";
-import { replacePlaceholders } from "../CreateDesign/helpers/utils";
+import {
+  replacePlaceholders,
+  safeJSONParse,
+} from "../CreateDesign/helpers/utils";
 
 import { callOpenAI } from "../openai/index";
 
 const checkFromInteruptHandler = async (object) => {
   const prompt = prompts.find((p) => p.name === "INTERRUPT_HANDLER");
   if (!prompt) throw new Error("INTERRUPT_HANDLER configuration not found.");
-
   const { system, user } = prompt;
-
   const { answers } = object;
 
+  const lastAnswer = answers.at(-1);
   const context = {
     idea: object.idea,
-    lastBotQuestion: answers.length ? answers[answers.length - 1].question : "",
-    userMessage: answers.length ? answers[answers.length - 1].answer : "",
+    lastBotQuestion: lastAnswer?.question ?? "",
+    userMessage: lastAnswer?.answer ?? "",
     answers: object.answers,
-    currentTopic: answers.length ? answers[answers.length - 1].topic : "",
+    currentTopic: lastAnswer?.topic ?? "",
   };
   const systemMessage = replacePlaceholders(system.message, context);
   const userMessage = replacePlaceholders(user.message, context);
@@ -27,14 +29,13 @@ const checkFromInteruptHandler = async (object) => {
   ];
 
   try {
-    const res = await callOpenAI(messages);
-    const response = JSON.parse(res);
-    console.log("response", response);
+    const rawResponse = await callOpenAI(messages);
+    const response = safeJSONParse(rawResponse);
 
-    if (response.type === "clarification" || response.type === "unrelated") {
+    if (["clarification", "unrelated"].includes(response?.type)) {
       const question = {
-        topic: answers[answers.length - 1].topic,
-        question: response.response,
+        topic: lastAnswer.topic,
+        question: response?.response ?? "",
         example: null,
         status: "unanswered",
       };
@@ -45,10 +46,8 @@ const checkFromInteruptHandler = async (object) => {
         question: question,
         topics: object.topics_covered,
       };
-    } else {
-      return null;
     }
-    return JSON.parse(response); // ensure handler returns parsed JSON
+    return null;
   } catch (err: any) {
     console.error(
       "Interrupt Handler Error:",
@@ -64,13 +63,11 @@ export const generateNextResponse = async (object: any): Promise<string> => {
     throw new Error("GET_NEXT_RESPONSE configuration not found.");
   }
   if (object.answers.length) {
-    const lastObject = object.answers[object.answers.length - 1];
-    if (lastObject.status && lastObject.status !== "skipped") {
-      const answersCheck = await checkFromInteruptHandler(object);
-      console.log("answersCheckanswersCheck", answersCheck);
-      if (answersCheck) {
-        return JSON.stringify(answersCheck);
-      }
+    const lastAnswerObject = object.answers?.at(-1);
+
+    if (lastAnswerObject.status && lastAnswerObject.status !== "skipped") {
+      const interruptResponse = await checkFromInteruptHandler(object);
+      if (interruptResponse) return JSON.stringify(interruptResponse);
     }
   }
   const { system, user } = prompt;
@@ -81,7 +78,7 @@ export const generateNextResponse = async (object: any): Promise<string> => {
   }
   const systemMessage = replacePlaceholders(system.message, object);
 
-  const userMessage = replacePlaceholders(user.message, { object }); // wrap in object if using {{object}}
+  const userMessage = replacePlaceholders(user.message, { object });
 
   const messages = [
     { role: "system", content: systemMessage },

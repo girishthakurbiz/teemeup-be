@@ -19,3 +19,13 @@ export function replacePlaceholders(
     return typeof value === "string" ? value : JSON.stringify(value, null, 2);
   });
 }
+
+
+export const safeJSONParse = (input: string): any => {
+  try {
+    return JSON.parse(input);
+  } catch {
+    console.error("Failed to parse JSON:", input);
+    return {};
+  }
+};
