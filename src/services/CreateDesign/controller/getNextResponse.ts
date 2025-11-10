@@ -58,9 +58,8 @@ export const getNextResponse = async (
     const objectToSend = { idea: userIdea, answers, topics_covered: topicsCovered, productType, color , greeting: parsedIdeaResponse?.validation === 'valid'};
     const rawOutput = await generateNextResponse(objectToSend);
     const response = JSON.parse(rawOutput);
-
     return successHandler(res, {
-      design_id: "design_id",
+      design_id: "design_id", // Replace with real ID if available,
       greeting: response?.greeting,
       question: response?.questions || response?.question,
       refinedDescription: response?.refinedDescription,
@@ -73,4 +72,3 @@ export const getNextResponse = async (
     return sendServerError(res, error);
   }
 };
-
